@@ -29,10 +29,18 @@ export class AuthController {
 
   @Post('register-dietitian')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   @ApiBearerAuth()
   registerDietitian(@Body() dto: RegisterDto, @CurrentUser() user: User) {
     return this.authService.registerDietitian(dto, user);
+  }
+
+  @Post('register-admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth()
+  registerAdmin(@Body() dto: RegisterDto, @CurrentUser() user: User) {
+    return this.authService.registerAdmin(dto, user);
   }
 
   @Post('verify-email')

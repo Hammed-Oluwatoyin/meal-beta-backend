@@ -35,7 +35,7 @@ export class MealPlansController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   findAll() {
     return this.mealPlansService.findAllForDietitian();
   }
@@ -47,7 +47,7 @@ export class MealPlansController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   create(
     @Body() dto: CreateMealPlanDto,
     @CurrentUser('id') dietitianId: string,
@@ -57,21 +57,21 @@ export class MealPlansController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateMealPlanDto) {
     return this.mealPlansService.update(id, dto);
   }
 
   @Post(':id/entries')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   addEntry(@Param('id') id: string, @Body() dto: AddPlanEntryDto) {
     return this.mealPlansService.addEntry(id, dto);
   }
 
   @Patch(':id/publish')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   publish(@Param('id') id: string) {
     return this.mealPlansService.publish(id);
   }

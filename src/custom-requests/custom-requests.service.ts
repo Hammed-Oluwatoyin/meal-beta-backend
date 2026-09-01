@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 import { RequestStatus } from '../common/enums';
-import { CustomMealRequest } from '../database/entities';
+import { CustomMealRequest, User } from '../database/entities';
 import { MealPlansService } from '../meal-plans/meal-plans.service';
 import { DeliverRequestDto } from './dto/deliver-request.dto';
 import { SubmitRequestDto } from './dto/submit-request.dto';
@@ -51,11 +52,20 @@ export class CustomRequestsService {
   }
 
   async findQueue(status?: RequestStatus): Promise<CustomMealRequest[]> {
-    return this.requestsRepository.find({
+    const requests = await this.requestsRepository.find({
       where: status ? { status } : {},
       relations: { patient: true, dietitian: true },
       order: { createdAt: 'ASC' },
     });
+    return requests.map((request) => ({
+      ...request,
+      patient: request.patient
+        ? (AuthService.sanitize(request.patient) as User)
+        : request.patient,
+      dietitian: request.dietitian
+        ? (AuthService.sanitize(request.dietitian) as User)
+        : request.dietitian,
+    }));
   }
 
   async findOne(

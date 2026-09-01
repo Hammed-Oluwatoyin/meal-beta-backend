@@ -35,21 +35,21 @@ export class MealsController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   create(@Body() dto: CreateMealDto, @CurrentUser('id') dietitianId: string) {
     return this.mealsService.create(dto, dietitianId);
   }
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateMealDto) {
     return this.mealsService.update(id, dto);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.mealsService.remove(id);
   }

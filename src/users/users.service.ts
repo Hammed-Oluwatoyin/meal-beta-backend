@@ -30,4 +30,12 @@ export class UsersService {
     }
     return AuthService.sanitize(patient);
   }
+
+  async listDietitians() {
+    const dietitians = await this.usersRepository.find({
+      where: [{ role: Role.DIETITIAN }, { role: Role.ADMIN }],
+      order: { createdAt: 'DESC' },
+    });
+    return dietitians.map((dietitian) => AuthService.sanitize(dietitian));
+  }
 }

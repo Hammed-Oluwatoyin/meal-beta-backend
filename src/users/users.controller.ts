@@ -8,18 +8,24 @@ import { UsersService } from './users.service';
 @ApiTags('users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.DIETITIAN)
-@Controller('users/patients')
+@Roles(Role.DIETITIAN, Role.ADMIN)
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('patients')
   listPatients() {
     return this.usersService.listPatients();
   }
 
-  @Get(':id')
+  @Get('patients/:id')
   getPatientDetail(@Param('id') id: string) {
     return this.usersService.getPatientDetail(id);
+  }
+
+  @Get('dietitians')
+  @Roles(Role.ADMIN)
+  listDietitians() {
+    return this.usersService.listDietitians();
   }
 }

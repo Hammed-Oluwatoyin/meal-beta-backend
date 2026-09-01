@@ -75,7 +75,7 @@ export class AuthService {
       passwordHash,
       role,
       verificationToken,
-      isVerified: role === Role.DIETITIAN,
+      isVerified: role === Role.DIETITIAN || role === Role.ADMIN,
     });
     await this.usersRepository.save(user);
     return {
@@ -85,12 +85,19 @@ export class AuthService {
   }
 
   async registerDietitian(dto: RegisterDto, actingUser: User) {
-    if (actingUser.role !== Role.DIETITIAN) {
+    if (actingUser.role !== Role.DIETITIAN && actingUser.role !== Role.ADMIN) {
       throw new ForbiddenException(
-        'Only dietitians can invite other dietitians',
+        'Only dietitians or admins can invite dietitians',
       );
     }
     return this.register(dto, Role.DIETITIAN);
+  }
+
+  async registerAdmin(dto: RegisterDto, actingUser: User) {
+    if (actingUser.role !== Role.ADMIN) {
+      throw new ForbiddenException('Only admins can invite other admins');
+    }
+    return this.register(dto, Role.ADMIN);
   }
 
   async verifyEmail(token: string) {

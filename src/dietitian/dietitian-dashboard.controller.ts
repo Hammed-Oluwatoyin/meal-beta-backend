@@ -8,7 +8,7 @@ import { DietitianDashboardService } from './dietitian-dashboard.service';
 @ApiTags('dietitian')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.DIETITIAN)
+@Roles(Role.DIETITIAN, Role.ADMIN)
 @Controller('dietitian/dashboard')
 export class DietitianDashboardController {
   constructor(private readonly dashboardService: DietitianDashboardService) {}

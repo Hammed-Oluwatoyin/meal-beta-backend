@@ -184,6 +184,21 @@ async function seed() {
   const userRepo = source.getRepository(User);
   const mealRepo = source.getRepository(Meal);
 
+  const adminEmail = 'admin@mealbeta.dev';
+  let admin = await userRepo.findOne({ where: { email: adminEmail } });
+  if (!admin) {
+    admin = userRepo.create({
+      email: adminEmail,
+      passwordHash: await bcrypt.hash('ChangeMe123!', 10),
+      role: Role.ADMIN,
+      isVerified: true,
+    });
+    await userRepo.save(admin);
+    console.log(`Seeded admin account: ${adminEmail} / ChangeMe123!`);
+  } else {
+    console.log('Admin account already exists, skipping.');
+  }
+
   const dietitianEmail = 'dietitian@mealbeta.dev';
   let dietitian = await userRepo.findOne({ where: { email: dietitianEmail } });
   if (!dietitian) {

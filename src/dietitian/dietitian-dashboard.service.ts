@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 import { PlanStatus, RequestStatus, Role } from '../common/enums';
 import {
   CustomMealRequest,
@@ -67,7 +68,12 @@ export class DietitianDashboardService {
         activePatientsCount,
         publishedPlansCount,
       },
-      recentRequests,
+      recentRequests: recentRequests.map((request) => ({
+        ...request,
+        patient: request.patient
+          ? AuthService.sanitize(request.patient)
+          : request.patient,
+      })),
     };
   }
 }

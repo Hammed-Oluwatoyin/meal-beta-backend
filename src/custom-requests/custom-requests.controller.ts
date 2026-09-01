@@ -39,7 +39,7 @@ export class CustomRequestsController {
 
   @Get()
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   findQueue(@Query('status') status?: RequestStatus) {
     return this.customRequestsService.findQueue(status);
   }
@@ -55,14 +55,14 @@ export class CustomRequestsController {
 
   @Patch(':id/claim')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   claim(@Param('id') id: string, @CurrentUser('id') dietitianId: string) {
     return this.customRequestsService.claim(id, dietitianId);
   }
 
   @Post(':id/deliver')
   @UseGuards(RolesGuard)
-  @Roles(Role.DIETITIAN)
+  @Roles(Role.DIETITIAN, Role.ADMIN)
   deliver(
     @Param('id') id: string,
     @Body() dto: DeliverRequestDto,

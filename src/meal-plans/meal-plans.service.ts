@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 import { MealSlot, PlanStatus, Role } from '../common/enums';
 import { Meal, MealPlan, MealPlanEntry, User } from '../database/entities';
 import { AddPlanEntryDto } from './dto/add-plan-entry.dto';
@@ -139,10 +140,16 @@ export class MealPlansService {
   }
 
   async findAllForDietitian(): Promise<MealPlan[]> {
-    return this.mealPlansRepository.find({
+    const plans = await this.mealPlansRepository.find({
       relations: { entries: { meal: true }, patient: true },
       order: { createdAt: 'DESC' },
     });
+    return plans.map((plan) => ({
+      ...plan,
+      patient: plan.patient
+        ? (AuthService.sanitize(plan.patient) as User)
+        : plan.patient,
+    }));
   }
 
   async create(dto: CreateMealPlanDto, dietitianId: string): Promise<MealPlan> {
