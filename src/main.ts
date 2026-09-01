@@ -1,11 +1,17 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DataSource } from 'typeorm';
 import { AppModule } from './app.module';
+import { runSeed } from './database/seed';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
+
+  // Migrations already ran during TypeOrmModule's initialization above
+  // (migrationsRun: true), so the schema is ready for this.
+  await runSeed(app.get(DataSource));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

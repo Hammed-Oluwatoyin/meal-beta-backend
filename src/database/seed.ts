@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import { DataSource } from 'typeorm';
 import { MealSlot, MealTag, Role } from '../common/enums';
 import dataSource from './data-source';
 import { Meal, User } from './entities';
@@ -179,8 +180,7 @@ const SEED_MEALS: Array<Partial<Meal>> = [
   },
 ];
 
-async function seed() {
-  const source = await dataSource.initialize();
+export async function runSeed(source: DataSource): Promise<void> {
   const userRepo = source.getRepository(User);
   const mealRepo = source.getRepository(Meal);
 
@@ -227,13 +227,19 @@ async function seed() {
   console.log(
     `Seeded ${SEED_MEALS.length} library meals (skipping any that already existed).`,
   );
+}
 
+async function standalone() {
+  const source = await dataSource.initialize();
+  await runSeed(source);
   await source.destroy();
 }
 
-seed()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+if (require.main === module) {
+  standalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
+}

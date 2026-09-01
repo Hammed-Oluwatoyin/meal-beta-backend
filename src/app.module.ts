@@ -24,6 +24,8 @@ import { DietitianModule } from './dietitian/dietitian.module';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         entities,
+        migrations: [__dirname + '/database/migrations/*.{ts,js}'],
+        migrationsRun: true,
         synchronize: false,
       }),
     }),
